@@ -1,0 +1,139 @@
+#include <iostream>
+#include <algorithm>
+#include <string> // getline()
+using namespace std;
+
+class String
+{
+	char* text = nullptr;
+	unsigned int length = 0;
+	unsigned int capacity = 80;
+
+public:
+	String() : String("", 80) {}
+
+	String(const char* text) : String(text, 80) {}
+
+	String(unsigned int capacity) : String("", capacity) {}
+
+	String(const String& original) : String(original.text, original.capacity) {}
+
+	String(const char* text, unsigned int capacity)
+	{
+		SetString(text, capacity);
+	}
+
+	~String()
+	{
+		if (text != nullptr)
+		{
+			delete[] text;
+			text = nullptr;
+		}
+	}
+
+	String GetString() const
+	{
+		String copy = text;
+		return copy;
+	}
+
+	void SetString(const char* text, unsigned int capacity = 80)
+	{
+		length = strlen(text);
+
+		if (capacity <= length)
+			capacity = length + 1;
+		this->capacity = capacity;
+
+		delete[] this->text;
+		this->text = new char[capacity];
+		strcpy_s(this->text, length + 1, text);
+	}
+
+	int GetLength() const
+	{
+		return length;
+	}
+
+	int GetCapacity() const
+	{
+		return capacity;
+	}
+
+	void Clear()
+	{
+		text[0] = 0;
+		length = 0;
+	}
+
+	void ShrinkToFit()
+	{
+		if (capacity == length + 1)
+		{
+			return;
+		}
+
+		capacity = length + 1;
+		char* temp = new char[capacity];
+		strcpy_s(temp, capacity, text);
+		delete[] text;
+		text = temp;
+	}
+
+	void GetLine() 
+	{
+		cout << "Input some text: ";
+		string message;
+		getline(cin, message);
+		SetString(message.c_str(), message.size() + 1);
+	}
+
+	void Replace()
+	{
+		string text{ "Hello, Tom!" };
+		const string separators{ " ,;:.\"!\n" }; // разделители слова
+		size_t start{ text.find("Tom") };            // находим позицию подстроки
+		size_t end{ text.find_first_of(separators, start + 1) }; // Находим конец подстроки
+		if (end == string::npos) // если разделители слова не найдены
+		{
+			end = text.length();
+		}
+		text.replace(start, end - start, "Alice");    // заменяем подстроку
+
+		cout << text << "\n";  // Hello, Alice!
+	}
+
+	void Reverse() 
+	{
+		string str = text;
+		reverse(str.begin(), str.end());
+		SetString(str.c_str(), str.size() + 1);
+	}
+
+	void Sort() 
+	{
+		string str = text;
+		sort(str.begin(), str.end());
+		SetString(str.c_str(), str.size() + 1);
+	}
+
+	void ShowInfo() const
+	{
+		cout << "Text: " << text << "\n";
+		cout << "Length: " << length << "\n";
+		cout << "Capacity: " << capacity << "\n\n\n";
+	}
+};
+
+int main()
+{
+	String s = "Alexander";
+	s.ShowInfo();
+	s.Reverse();
+	s.ShowInfo();
+	s.Sort();
+	s.ShowInfo();
+	s.GetLine();
+	s.ShowInfo();
+}
